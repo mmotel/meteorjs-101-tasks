@@ -1,0 +1,61 @@
+<head>
+  <title>tasks</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span2"> </div>
+      <div class="span7">
+        <div class="hero-unit">
+          {{> tasks}}
+        </div>
+      </div>
+      <div class="span2"> </div>
+    </div>
+  </div>
+</body>
+
+<template name="tasks">
+  {{#if selected}}
+    {{> editTask}}
+  {{else}}
+    {{> addTask}}
+  {{/if}}
+  <table class="table table-striped table-hover">
+    <tr><th colspan="2">Nazwa</th></tr>
+    {{#each tasks}}
+      {{> task}}
+    {{/each}}
+  </table>
+</template>
+
+
+<template name="task">
+  <tr>
+    <td>
+      <b>{{name}}</b>
+    </td>
+    <td>
+      <button class="btn-link pull-right rmTask"><i class="icon-trash"></i></button>
+      <button class="btn-link pull-right editTask"><i class="icon-edit"></i></button>
+    </td>
+  </tr>
+</template>
+
+<template name="addTask">
+  <div class="form-inline well">
+    <h4>Dodaj</h4>
+    <input type="text" placeholder="nazwa" id="task-name" class="input-xlarge">
+    <button type="button" class="btn" id="add-task-btn">Dodaj</button>
+  </div>
+</template>
+
+<template name="editTask">
+  <div class="form-inline well">
+    <h4>Edycja</h4>
+    <input type="text" value="{{selectedTask.name}}" id="edit-task-name" class="input-xlarge">
+    <button type="button" class="btn btn-success" id="edit-task-btn">Zapisz</button>
+    <button type="button" class="btn" id="edit-task-cancel-btn">Anuluj</button>
+  </div>
+</template>

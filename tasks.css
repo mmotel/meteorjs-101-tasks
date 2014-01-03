@@ -1,0 +1,9 @@
+/* CSS declarations go here */
+
+body {
+	padding-top: 40px;
+}
+
+.hidden {
+	display: none;
+}
