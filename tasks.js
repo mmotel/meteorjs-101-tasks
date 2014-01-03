@@ -1,15 +1,18 @@
+//local variables
 // Task {
 //   name: String
 // }
-
 var Task = function (name){
   this.name = name;
   return this;
 }
 
+//global variables
 Tasks = new Meteor.Collection('tasks');
 
+//client side code
 if (Meteor.isClient) {
+  //templates variables initialization
   Template.tasks.tasks = function (){
     return Tasks.find({}, {sort: {"name": 1} });
   };
@@ -21,9 +24,9 @@ if (Meteor.isClient) {
   Template.tasks.selected = function (){
     return Session.get("selected_task");
   }
+  //---
 
-  // $('.inline-form').hide();
-
+  //templates events handling
   Template.addTask.events({
     'click button#add-task-btn': function () {
       var name = $('#task-name').val();
@@ -60,8 +63,9 @@ if (Meteor.isClient) {
       Session.set("selected_task", this._id);
     }
   });
+  //---
 }
-
+//server side code
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // Tasks.remove({});
