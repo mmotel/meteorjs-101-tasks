@@ -24,6 +24,13 @@ if (Meteor.isClient) {
   Template.tasks.selected = function (){
     return Session.get("selected_task");
   }
+
+  Template.tasks.loggedIn = function (){
+    return Meteor.userId() !== null;
+  }
+  Template.task.loggedIn = function (){
+    return Meteor.userId() !== null;
+  }
   //---
 
   //templates events handling

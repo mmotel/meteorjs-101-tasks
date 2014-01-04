@@ -7,3 +7,7 @@ body {
 .hidden {
 	display: none;
 }
+
+#login-buttons {
+	float: right;
+}
