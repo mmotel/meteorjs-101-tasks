@@ -9,7 +9,7 @@
         {{loginButtons align="right"}} 
       </div>
       <div class="span7">
-        <div class="hero-unit">
+        <div class="content">
           {{> tasks}}
         </div>
       </div>
@@ -28,8 +28,12 @@
   {{else}}
     <h3>Zaloguj się aby dodawać oraz edytować wpisy</h3>
   {{/if}}
+  <h2>Zadania</h2>
   <table class="table table-striped table-hover">
-    <tr><th colspan="2">Nazwa</th></tr>
+    <tr>
+      <th>Nazwa</th>
+      <th colspan="2">Właściciel</th>
+    </tr>
     {{#each tasks}}
       {{> task}}
     {{/each}}
@@ -40,10 +44,13 @@
 <template name="task">
   <tr>
     <td>
-      <b>{{name}}</b>
+      <i>{{name}}</i>
     </td>
     <td>
-      {{#if currentUser}}
+      {{owner.profile.name}}
+    </td>
+    <td>
+      {{#if canEdit}}
         <button class="btn-link pull-right rmTask"><i class="icon-trash"></i></button>
         <button class="btn-link pull-right editTask"><i class="icon-edit"></i></button>
       {{/if}}
@@ -52,15 +59,16 @@
 </template>
 
 <template name="addTask">
-  <div class="form-inline well">
+  <div class="form-inline content">
     <h4>Dodaj</h4>
     <input type="text" placeholder="nazwa" id="task-name" class="input-xlarge">
-    <button type="button" class="btn" id="add-task-btn">Dodaj</button>
+    <button type="button" class="btn btn-success" id="add-task-btn">Dodaj</button>
+    <button type="button" class="btn" id="add-task-cancel-btn">Anuluj</button>
   </div>
 </template>
 
 <template name="editTask">
-  <div class="form-inline well">
+  <div class="form-inline content">
     <h4>Edycja</h4>
     <input type="text" value="{{selectedTask.name}}" id="edit-task-name" class="input-xlarge">
     <button type="button" class="btn btn-success" id="edit-task-btn">Zapisz</button>

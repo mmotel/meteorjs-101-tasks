@@ -1,9 +1,11 @@
 //local variables
 // Task {
-//   name: String
+//  name: String,
+//  owner: String (fbid?!)
 // }
-var Task = function (name){
+var Task = function (name, owner){
   this.name = name;
+  this.owner = owner;
   return this;
 }
 
@@ -20,7 +22,11 @@ if (Meteor.isClient) {
 
   //templates variables initialization
   Template.tasks.tasks = function (){
-    return Tasks.find({}, {sort: {"name": 1} });
+    var tasks = Tasks.find({}, {sort: {"name": 1} }).fetch();
+    for(var i=0; i < tasks.length; i++){
+      tasks[i].owner = Meteor.users.findOne(tasks[i].owner);
+    }
+    return tasks;
   };
 
   Template.editTask.selectedTask = function (){
@@ -30,6 +36,13 @@ if (Meteor.isClient) {
   Template.tasks.selected = function (){
     return Session.get("selected_task");
   }
+
+  Template.task.canEdit = function (){
+      console.log(this);
+      console.log(Meteor.userId() + ' !== null && ' + Meteor.userId() + ' === ' + this.owner._id);
+      console.log(Meteor.userId() !== null && Meteor.userId() === this.owner._id);
+    return Meteor.userId() !== null && Meteor.userId() === this.owner._id;
+  }
   //---
 
   //templates events handling
@@ -37,8 +50,12 @@ if (Meteor.isClient) {
     'click button#add-task-btn': function () {
       var name = $('#task-name').val();
       if(name !== null){
-        Tasks.insert(new Task(name));
+        Tasks.insert(new Task(name, Meteor.userId() ));
+        $('#task-name').val('');
       }
+    },
+    'click button#add-task-cancel-btn': function () {
+      $('#task-name').val('');
     }
   });
 
@@ -75,11 +92,11 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   Meteor.startup(function () {
     // Tasks.remove({});
-    if(Tasks.find().count() === 0){
-      var names = [ "lezing", "smazing", "plazing" ];
-      for(var i=0; i < names.length; i++){
-        Tasks.insert(new Task(names[i]));
-      }
-    }
+    // if(Tasks.find().count() === 0){
+    //   var names = [ "lezing", "smazing", "plazing" ];
+    //   for(var i=0; i < names.length; i++){
+    //     Tasks.insert(new Task(names[i]));
+    //   }
+    // }
   });
 }
