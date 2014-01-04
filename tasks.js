@@ -12,6 +12,12 @@ Tasks = new Meteor.Collection('tasks');
 
 //client side code
 if (Meteor.isClient) {
+  Template.tasks.rendered = function (){
+    $('span.sign-in-text-facebook').html("Zaloguj przez Facebook'a");
+    $('div#login-buttons-logout').html("Wyloguj");
+  }
+
+
   //templates variables initialization
   Template.tasks.tasks = function (){
     return Tasks.find({}, {sort: {"name": 1} });
@@ -23,13 +29,6 @@ if (Meteor.isClient) {
 
   Template.tasks.selected = function (){
     return Session.get("selected_task");
-  }
-
-  Template.tasks.loggedIn = function (){
-    return Meteor.userId() !== null;
-  }
-  Template.task.loggedIn = function (){
-    return Meteor.userId() !== null;
   }
   //---
 

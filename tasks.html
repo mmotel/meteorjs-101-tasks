@@ -19,12 +19,14 @@
 </body>
 
 <template name="tasks">
-  {{#if loggedIn}}
+  {{#if currentUser}}
     {{#if selected}}
       {{> editTask}}
     {{else}}
       {{> addTask}}
     {{/if}}
+  {{else}}
+    <h3>Zaloguj się aby dodawać oraz edytować wpisy</h3>
   {{/if}}
   <table class="table table-striped table-hover">
     <tr><th colspan="2">Nazwa</th></tr>
@@ -41,7 +43,7 @@
       <b>{{name}}</b>
     </td>
     <td>
-      {{#if loggedIn}}
+      {{#if currentUser}}
         <button class="btn-link pull-right rmTask"><i class="icon-trash"></i></button>
         <button class="btn-link pull-right editTask"><i class="icon-edit"></i></button>
       {{/if}}
