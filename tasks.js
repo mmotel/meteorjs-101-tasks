@@ -12,11 +12,11 @@ Tasks = new Meteor.Collection('tasks');
 
 //client side code
 if (Meteor.isClient) {
+  //setting login dialog text language into Polish
   Template.tasks.rendered = function (){
-    $('span.sign-in-text-facebook').html("Zaloguj przez Facebook'a");
-    $('div#login-buttons-logout').html("Wyloguj");
-  }
-
+    $('span.sign-in-text-facebook').html("Zaloguj przez Facebook'a"); //login btn 
+    $('div#login-buttons-logout').html("Wyloguj");                    //logout btn
+  };
 
   //templates variables initialization
   Template.tasks.tasks = function (){
