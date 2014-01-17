@@ -33,7 +33,7 @@ if (Meteor.isClient) {
     return Tasks.findOne({"_id": Session.get("selected_task")});
   };
 
-  Template.tasks.selected = function (){
+  Template.tasksManagment.selected = function (){
     return Session.get("selected_task");
   }
 
