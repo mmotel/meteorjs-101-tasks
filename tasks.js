@@ -1,16 +1,33 @@
-//local variables
+//Data models
+//-----
 // Task {
 //  name: String,
-//  owner: String (fbid?!)
+//  owner: String (MongoDB._id)
+//  listid: String (MongoDB._id)
 // }
-var Task = function (name, owner){
+//-----
+// List {
+//   name: String,
+//   owner: (MongoDB._id)
+// }
+//-----
+//local variables
+var Task = function (name, owner, listid){
+  this.name = name;
+  this.owner = owner;
+  this.listid = listid;
+  return this;
+};
+
+var List = function (name, owner){
   this.name = name;
   this.owner = owner;
   return this;
-}
+};
 
 //global variables
 Tasks = new Meteor.Collection('tasks');
+Lists = new Meteor.Collection('lists');
 
 //client side code
 if (Meteor.isClient) {
@@ -21,59 +38,65 @@ if (Meteor.isClient) {
   };
 
   //templates variables initialization
+  //Lists & list's tasks
   Template.tasks.tasks = function (){
-    var tasks = Tasks.find({}, {sort: {"name": 1} }).fetch();
-    for(var i=0; i < tasks.length; i++){
-      tasks[i].owner = Meteor.users.findOne(tasks[i].owner);
+    if(Meteor.user() && Session.get("selected_list") && Session.get("selected_list") !== null){
+      var tasks = Tasks.find({"listid": Session.get("selected_list")}, {sort: {"name": 1} }).fetch();
+      for(var i=0; i < tasks.length; i++){
+        tasks[i].owner = Meteor.users.findOne(tasks[i].owner);
+      }
+      return tasks;
     }
-    return tasks;
+    else{
+      return [];
+    }
   };
 
-  Template.editTask.selectedTask = function (){
+  Template.lists.lists = function (){
+    if(Meteor.user()){
+      var lists = Lists.find({"owner": Meteor.userId()}, {sort: {"name": 1} }).fetch();
+      for(var i=0; i < lists.length; i++){
+        lists[i].owner = Meteor.users.findOne(lists[i].owner);
+      }
+      return lists;
+    }
+    else{
+      return [];
+    }
+  };
+  //Selected List & Task
+  Template.editTaskModal.selectedTask = function (){
     return Tasks.findOne({"_id": Session.get("selected_task")});
   };
 
-  Template.tasksManagment.selected = function (){
-    return Session.get("selected_task");
-  }
-
+  Template.editListModal.selectedList = function (){
+    return Lists.findOne({"_id": Session.get("selected_list")});
+  };
+  //Can edit/rm Task & List
   Template.task.canEdit = function (){
-      console.log(this);
-      console.log(Meteor.userId() + ' !== null && ' + Meteor.userId() + ' === ' + this.owner._id);
-      console.log(Meteor.userId() !== null && Meteor.userId() === this.owner._id);
     return Meteor.userId() !== null && Meteor.userId() === this.owner._id;
-  }
+  };
+
+  Template.list.canEdit = function (){
+    return Meteor.userId() !== null && Meteor.userId() === this.owner._id;
+  };
+  //Show modals
+  Template.addListModal.show = function (){
+    return Session.get("show_add_list_modal");
+  };
+
+  Template.editListModal.show = function (){
+    return Session.get("show_edit_list_modal");
+  };
+
+  Template.addTaskModal.show = function (){
+    return Session.get("show_add_task_modal");
+  };
+
+  Template.editTaskModal.show = function (){
+    return Session.get("show_edit_task_modal");
+  };
   //---
-
-  //templates events handling
-  Template.addTask.events({
-    'click button#add-task-btn': function () {
-      var name = $('#task-name').val();
-      if(name !== null){
-        Tasks.insert(new Task(name, Meteor.userId() ));
-        $('#task-name').val('');
-      }
-    },
-    'click button#add-task-cancel-btn': function () {
-      $('#task-name').val('');
-    }
-  });
-
-  Template.editTask.events({
-    'click button#edit-task-cancel-btn': function () {
-      Session.set('selected_task', null);
-    },
-    'click button#edit-task-btn': function () {
-      var tid = Session.get("selected_task");
-      var name = $('#edit-task-name').val();
-
-      if(name !== null){
-        Tasks.update({"_id": tid}, {$set: {"name": name} });
-      }
-
-      Session.set('selected_task', null);
-    }
-  });
 
   Template.task.events({
     'click button.rmTask': function (event, template){
@@ -84,6 +107,84 @@ if (Meteor.isClient) {
     'click button.editTask': function (event, template){
       console.log(this._id);
       Session.set("selected_task", this._id);
+      Session.set("show_edit_task_modal", true);
+    }
+  });
+
+  Template.list.events({
+    'click button.rmList': function (event, template){
+      console.log(this._id);
+      Session.set('selected_list', null);
+      Lists.remove({_id: this._id});
+      // Tasks.remove({"listid": this._id});
+    },
+    'click button.editList': function (event, template){
+      // console.log(this._id);
+      Session.set("selected_list", this._id);
+      Session.set("show_edit_list_modal", true);
+    },
+    'click button.addTask': function (event, template){
+      Session.set("selected_list", this._id);
+      Session.set("show_add_task_modal", true);
+    },
+    'click tr': function (event, template){
+      Session.set("selected_list", this._id);
+    }
+  });  
+
+  Template.addListModal.events({
+    'click .done': function (){
+      Session.set("show_add_list_modal", false);
+    },
+    'click .save': function (event, template){
+      var listName = $('#list-name').val();
+      if(listName !== ""){
+        Lists.insert(new List(listName, Meteor.userId() ));
+      }
+    }
+  });
+
+  Template.editListModal.events({
+    'click .done': function (){
+      Session.set("show_edit_list_modal", false);
+    },
+    'click .save': function (event, template){
+      var listName = $('#edit-list-name').val();
+      if(listName !== ""){
+        Lists.update({_id: Session.get("selected_list")}, {$set: { name: listName } });
+        Session.set("selected_list", null);
+      }
+    }
+  });
+
+  Template.addTaskModal.events({
+    'click .done': function (){
+      Session.set("show_add_task_modal", false);
+    },
+    'click .save': function (event, template){
+      var taskName = $('#task-name').val();
+      if(taskName !== ""){
+        Tasks.insert(new Task(taskName, Meteor.userId() , Session.get("selected_list") ));
+      }
+    }
+  });
+
+  Template.editTaskModal.events({
+    'click .done': function (){
+      Session.set("show_edit_task_modal", false);
+    },
+    'click .save': function (event, template){
+      var taskName = $('#edit-task-name').val();
+      if(taskName !== ""){
+        Tasks.update({_id: Session.get("selected_task")}, {$set: { name: taskName } });
+        Session.set("selected_task", null);
+      }
+    }
+  });
+
+  Template.menu.events({
+    'click #addList': function (event, template){
+      Session.set("show_add_list_modal", true);
     }
   });
   //---
