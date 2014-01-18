@@ -1,0 +1,33 @@
+/* CSS declarations go here */
+
+body {
+}
+
+.navbar {
+	margin-bottom: 10px;
+}
+
+.hidden {
+	display: none;
+}
+
+#login-buttons {
+	margin: 5px;
+}
+
+.content {
+	padding: 20px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+.mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    background-color: #000000;
+    opacity: .4;
+    z-index: 1;
+}
