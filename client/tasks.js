@@ -14,9 +14,9 @@ Meteor.startup(function () {
 
 
   //setting login dialog text language into Polish
-  Template.tasks.rendered = function (){
-    $('span.sign-in-text-facebook').html("Zaloguj przez Facebook'a"); //login btn 
-    $('div#login-buttons-logout').html("Wyloguj");                    //logout btn
+  Template.menu.rendered = function (){
+    $('.sign-in-text-facebook').html("Zaloguj przez Facebook'a"); //login btn 
+    $('#login-buttons-logout').html("Wyloguj");                    //logout btn
   };
 
   //templates variables initialization
@@ -53,6 +53,10 @@ Meteor.startup(function () {
 
   Template.rmTaskModal.selectedTask = function (){
     return Tasks.findOne({"_id": Session.get("selected_task")});
+  };
+
+  Template.tasks.selectedList = function (){
+    return Lists.findOne({"_id": Session.get("selected_list")});
   };
 
   Template.editListModal.selectedList = function (){
@@ -125,6 +129,7 @@ Meteor.startup(function () {
       Session.set("show_add_task_modal", true);
     },
     'click td.name': function (event, template){
+      console.log(this._id);
       Session.set("selected_list", this._id);
     }
   });  
@@ -136,7 +141,6 @@ Meteor.startup(function () {
     'click .save': function (event, template){
       var listName = $('#list-name').val();
       if(listName !== ""){
-        // Lists.insert(new List(listName, Meteor.userId() ));
         Meteor.call('addList', listName, Meteor.userId());
       }
     }

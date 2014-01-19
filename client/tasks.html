@@ -69,7 +69,7 @@
 
 <template name="list">
   <tr>
-    <td>
+    <td class="name">
       <i>{{name}}</i>
     </td>
     <td>
@@ -85,7 +85,7 @@
 
 <!-- tasks -->
 <template name="tasks">
-  <h2>Zadania</h2>
+  <h2>Zadania z listy: {{selectedList.name}}</h2>
   <table class="table table-striped table-hover">
     <tr>
       <th>Nazwa</th>
