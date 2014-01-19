@@ -7,20 +7,29 @@
   {{> editListModal}}
   {{> addTaskModal}}
   {{> editTaskModal}}
+  {{> rmTaskModal}}
+  {{> rmListModal}}
 
   {{> menu}}
 
   <div class="container">
-    <div class="row">
-      <div class="span4"> 
-        {{> lists}}
-      </div>
-      <div class="span8">
-        <div class="content">
-          {{> tasks}}
+    {{#if currentUser}}
+      <div class="row">
+        <div class="span4"> 
+          {{> lists}}
+        </div>
+        <div class="span8">
+          <div class="content">
+            {{> tasks}}
+          </div>
         </div>
       </div>
-    </div>
+    {{else}}
+      <div class="well">
+        <h1>Witaj!</h1>
+        <h4>Zaloguj się i zacznij korzystać z apliakcji!</h4>
+      </div>
+    {{/if}}
   </div>
 </body>
 
@@ -42,6 +51,7 @@
   </div>
 </template>
 
+<!-- lists -->
 <template name="lists">
   <div class="content">
     <h2>Listy</h2>
@@ -54,7 +64,6 @@
         {{> list}}
       {{/each}}
     </table>
-
   </div>
 </template>
 
@@ -72,6 +81,7 @@
     </td>
   </tr>
 </template>
+<!-- /lists -->
 
 <!-- tasks -->
 <template name="tasks">
@@ -86,7 +96,6 @@
     {{/each}}
   </table>
 </template>
-
 
 <template name="task">
   <tr>
@@ -155,6 +164,26 @@
   {{/if}}
 </template>
 
+<template name="rmListModal">
+  {{#if show}}
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close done" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>usuń listę</h3>
+    </div>
+    <div class="modal-body">
+      <h3>Lista: {{selectedList.name}}</h3>
+      <h4>Czy napewno chcesz usunąć tą listę?</h4>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn done">Anuluj</a>
+      <a href="#" class="btn btn-danger done save">Usuń</a>
+    </div>
+  </div>
+  {{/if}}
+</template>
+
 <template name="addTaskModal">
   {{#if show}}
   <div class="mask"> </div>
@@ -198,6 +227,26 @@
     <div class="modal-footer">
       <a href="#" class="btn done">Anuluj</a>
       <a href="#" class="btn btn-primary done save">Zapisz</a>
+    </div>
+  </div>
+  {{/if}}
+</template>
+
+<template name="rmTaskModal">
+  {{#if show}}
+  <div class="mask"> </div>
+  <div class="modal">
+    <div class="modal-header">
+      <button type="button" class="close done" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3>usuń zadanie</h3>
+    </div>
+    <div class="modal-body">
+      <h3>Zadanie: {{selectedTask.name}}</h3>
+      <h4>Czy napewno chcesz usunąć to zadanie?</h4>
+    </div>
+    <div class="modal-footer">
+      <a href="#" class="btn done">Anuluj</a>
+      <a href="#" class="btn btn-danger done save">Usuń</a>
     </div>
   </div>
   {{/if}}

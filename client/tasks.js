@@ -1,4 +1,18 @@
 //client side code
+Meteor.startup(function () {
+  Deps.autorun(function () {
+    if(Meteor.user()){
+      if(Session.get("selected_list") === undefined || Session.get("selected_list") === null){
+        var list = Lists.findOne({"owner": Meteor.userId() });
+        if(list){
+          Session.set("selected_list", list._id);
+        }
+      }
+    }
+  });
+});
+
+
   //setting login dialog text language into Polish
   Template.tasks.rendered = function (){
     $('span.sign-in-text-facebook').html("Zaloguj przez Facebook'a"); //login btn 
@@ -37,7 +51,15 @@
     return Tasks.findOne({"_id": Session.get("selected_task")});
   };
 
+  Template.rmTaskModal.selectedTask = function (){
+    return Tasks.findOne({"_id": Session.get("selected_task")});
+  };
+
   Template.editListModal.selectedList = function (){
+    return Lists.findOne({"_id": Session.get("selected_list")});
+  };
+
+  Template.rmListModal.selectedList = function (){
     return Lists.findOne({"_id": Session.get("selected_list")});
   };
   //Can edit/rm Task & List
@@ -57,6 +79,10 @@
     return Session.get("show_edit_list_modal");
   };
 
+  Template.rmListModal.show = function (){
+    return Session.get("show_rm_list_modal");
+  };
+
   Template.addTaskModal.show = function (){
     return Session.get("show_add_task_modal");
   };
@@ -64,13 +90,17 @@
   Template.editTaskModal.show = function (){
     return Session.get("show_edit_task_modal");
   };
+
+  Template.rmTaskModal.show = function (){
+    return Session.get("show_rm_task_modal");
+  };
   //---
 
   Template.task.events({
     'click button.rmTask': function (event, template){
       console.log(this._id);
-      Session.set('selected_task', null);
-      Tasks.remove({_id: this._id});
+      Session.set('selected_task', this._id);
+      Session.set("show_rm_task_modal", true);
     },
     'click button.editTask': function (event, template){
       console.log(this._id);
@@ -82,8 +112,8 @@
   Template.list.events({
     'click button.rmList': function (event, template){
       console.log(this._id);
-      Session.set("selected_list", null);
-      Meteor.call('rmList', this._id);
+      Session.set("selected_list", this._id);
+      Session.set("show_rm_list_modal", true);
     },
     'click button.editList': function (event, template){
       // console.log(this._id);
@@ -94,7 +124,7 @@
       Session.set("selected_list", this._id);
       Session.set("show_add_task_modal", true);
     },
-    'click tr': function (event, template){
+    'click td.name': function (event, template){
       Session.set("selected_list", this._id);
     }
   });  
@@ -125,6 +155,16 @@
     }
   });
 
+  Template.rmListModal.events({
+    'click .done': function (){
+      Session.set("show_rm_list_modal", false);
+    },
+    'click .save': function (event, template){
+      Meteor.call("rmList", Session.get("selected_list"));
+      Session.set("selected_list", null);
+    }
+  });
+
   Template.addTaskModal.events({
     'click .done': function (){
       Session.set("show_add_task_modal", false);
@@ -148,6 +188,16 @@
         Tasks.update({_id: Session.get("selected_task")}, {$set: { name: taskName } });
         Session.set("selected_task", null);
       }
+    }
+  });
+
+  Template.rmTaskModal.events({
+    'click .done': function (){
+      Session.set("show_rm_task_modal", false);
+    },
+    'click .save': function (event, template){
+      Tasks.remove({_id: Session.get("selected_task")});
+      Session.set("selected_task", null);
     }
   });
 
