@@ -2,6 +2,7 @@
 
 Meteor.subscribe("users");
 Meteor.subscribe("lists"); //only current user's lists
+Meteor.subscribe("tasks"); //only current user's tasks
 
 //client side startup
 Meteor.startup(function () {
@@ -13,7 +14,6 @@ Meteor.startup(function () {
           Session.set("selected_list", list._id);
         }
       }
-      Meteor.subscribe("tasks", Session.get("selected_list")); //only tasks from selected list
     }
   });
 });
@@ -28,7 +28,7 @@ Meteor.startup(function () {
   //templates variables initialization
   //Lists & list's tasks
   Template.tasks.tasks = function (){
-    var tasks = Tasks.find({}, {sort: {"name": 1} }).fetch();
+    var tasks = Tasks.find({"listid": Session.get("selected_list")}, {sort: {"name": 1} }).fetch();
     for(var i=0; i < tasks.length; i++){
       tasks[i].owner = Meteor.users.findOne(tasks[i].owner);
     }
@@ -125,7 +125,7 @@ Meteor.startup(function () {
       Session.set("show_add_task_modal", true);
     },
     'click button.name': function (event, template){
-      console.log(this._id);
+      // console.log(this._id);
       Session.set("selected_list", this._id);
     }
   });  

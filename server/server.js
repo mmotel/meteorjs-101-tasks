@@ -4,10 +4,10 @@ Meteor.publish("users", function (){ //publish only users' ids & profiles
 	return Meteor.users.find({}, { fields: {_id: 1, profile: 1} });
 });
 
-Meteor.publish("lists", function (){ //publish only user's lists
+Meteor.publish("lists", function (){ //publish only current user's lists
 	return Lists.find({"owner": this.userId});
 })
 
-Meteor.publish("tasks", function (listid){ //publish only tasks from selected list 
-	return Tasks.find({"listid": listid});
+Meteor.publish("tasks", function (){ //publish only current user's tasks 
+	return Tasks.find({"owner": this.userId});
 })
