@@ -124,7 +124,7 @@ Meteor.startup(function () {
       Session.set("selected_list", this._id);
       Session.set("show_add_task_modal", true);
     },
-    'click td.name': function (event, template){
+    'click button.name': function (event, template){
       console.log(this._id);
       Session.set("selected_list", this._id);
     }
@@ -135,9 +135,9 @@ Meteor.startup(function () {
       Session.set("show_add_list_modal", false);
     },
     'click .save': function (event, template){
-      var listName = $('#list-name').val();
-      if(listName !== ""){
-        Meteor.call('addList', listName, Meteor.userId());
+      var name = template.find("#list-name").value;
+      if(name !== ""){
+        Meteor.call('addList', name, Meteor.userId());
       }
     }
   });
@@ -147,9 +147,9 @@ Meteor.startup(function () {
       Session.set("show_edit_list_modal", false);
     },
     'click .save': function (event, template){
-      var listName = $('#edit-list-name').val();
-      if(listName !== ""){
-        Lists.update({_id: Session.get("selected_list")}, {$set: { name: listName } });
+      var name = template.find("#edit-list-name").value;
+      if(name !== ""){
+        Lists.update({_id: Session.get("selected_list")}, {$set: { "name": name } });
         Session.set("selected_list", null);
       }
     }
@@ -170,9 +170,9 @@ Meteor.startup(function () {
       Session.set("show_add_task_modal", false);
     },
     'click .save': function (event, template){
-      var taskName = $('#task-name').val();
-      if(taskName !== ""){
-        Meteor.call('addTask', taskName, Meteor.userId(), Session.get("selected_list"));
+      var name = template.find("#task-name").value;
+      if(name !== ""){
+        Meteor.call('addTask', name, Meteor.userId(), Session.get("selected_list"));
       }
     }
   });
@@ -182,9 +182,9 @@ Meteor.startup(function () {
       Session.set("show_edit_task_modal", false);
     },
     'click .save': function (event, template){
-      var taskName = $('#edit-task-name').val();
-      if(taskName !== ""){
-        Tasks.update({_id: Session.get("selected_task")}, {$set: { name: taskName } });
+      var name = template.find('#edit-task-name').value;
+      if(name !== ""){
+        Tasks.update({_id: Session.get("selected_task")}, {$set: { "name": name } });
         Session.set("selected_task", null);
       }
     }
