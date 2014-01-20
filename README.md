@@ -1,6 +1,6 @@
 #MeteorJS 101: Tasks lists
 
-###Meteor packages installation
+###Meteor packages managment
 
 ```sh
 meteor add bootstrap
