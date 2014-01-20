@@ -8,9 +8,10 @@ meteor add jquery
 meteor add account-ui
 meteor add accounts-facebook
 meteor remove insecure
+meteor remove autopublish
 ```
 
-###App structure
+###Application structure
 
 ```
 model.js
